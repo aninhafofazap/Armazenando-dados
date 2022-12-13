@@ -16,16 +16,30 @@ form.addEventListener("submit", (evento) => {
     const nome = evento.target.elements['nome']
     const quantidade = evento.target.elements['quantidade']
 
+    const existe = itens.find(elemento => elemento.nome === nome.value);
+
     // Para criar e salvar no localStorage
-    const intemAtual = {
+    const itemAtual = {
         "nome": nome.value,
         "quantidade": quantidade.value
     }
+    // Condição para conferir se o elemento existe ou não
+    if (existe) {
+        itemAtual.id = existe.id
+
+        atualizaElemento(itemAtual);
+
+        itens[existe.id] = itemAtual
+
+    } else {
+        itemAtual.id = itens.length
+
+        criaElemento(itemAtual);
+
+        itens.push(itemAtual);
+    }
 
 
-    criaElemento(intemAtual);
-
-    itens.push(intemAtual);
     localStorage.setItem("itens", JSON.stringify(itens));
 
     nome.value = ""
@@ -42,9 +56,15 @@ function criaElemento(item) {
 
     const numeroItem = document.createElement('strong');
     numeroItem.innerHTML = item.quantidade
+    numeroItem.dataset.id = item.id
     novoItem.appendChild(numeroItem);
 
     novoItem.innerHTML += item.nome
 
     lista.appendChild(novoItem);
+}
+
+// Função para atualizar o elemento. 
+function atualizaElemento(item) {
+    document.querySelector("[data-id='" + item.id + "']").innerHTML = item.quantidade;
 }
