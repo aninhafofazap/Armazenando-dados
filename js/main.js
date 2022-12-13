@@ -1,40 +1,50 @@
+// Operador logico para retornar com os dados salvos
 const form = document.getElementById("novoItem");
 const lista = document.getElementById("lista");
-const itens = []
+const itens = JSON.parse(localStorage.getItem("itens")) || [];
 
-// Função para acontecer a criação do novo item
+
+// Uso do  forEach para todos os itens na lista
+itens.forEach(elemento => {
+    criaElemento(elemento)
+});
+
+// addEventListener refatorada para receber as outras funções
 form.addEventListener("submit", (evento) => {
     evento.preventDefault()
 
     const nome = evento.target.elements['nome']
     const quantidade = evento.target.elements['quantidade']
 
-    criaElemento(nome.value, quantidade.value);
+    // Para criar e salvar no localStorage
+    const intemAtual = {
+        "nome": nome.value,
+        "quantidade": quantidade.value
+    }
+
+
+    criaElemento(intemAtual);
+
+    itens.push(intemAtual);
+    localStorage.setItem("itens", JSON.stringify(itens));
 
     nome.value = ""
     quantidade.value = ""
+
 })
 
 
-// Função para criar um novo item
-function criaElemento(nome, quantidade) {
+// Função refatorada para criar um novo item
+function criaElemento(item) {
 
     const novoItem = document.createElement('li');
     novoItem.classList.add("item")
 
     const numeroItem = document.createElement('strong');
-    numeroItem.innerHTML = quantidade
-
+    numeroItem.innerHTML = item.quantidade
     novoItem.appendChild(numeroItem);
-    novoItem.innerHTML += nome
+
+    novoItem.innerHTML += item.nome
 
     lista.appendChild(novoItem);
-
-    const intemAtual = {
-        "nome": nome,
-        "quantidade": quantidade
-    }
-
-    itens.push(intemAtual);
-    localStorage.setItem("item", JSON.stringify(intemAtual));
 }
